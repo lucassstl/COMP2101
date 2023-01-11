@@ -1,3 +1,3 @@
 #!/bin/bash
-echo Hello World!
+echo one does not sinply wlak in to mordor!
 exit
