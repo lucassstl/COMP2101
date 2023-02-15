@@ -6,7 +6,8 @@ source /etc/os-release
 
 #this part of the script is going to colect the information that is going to be->
 #displayed on the echo command
-var1=$(hostname -A)
+title=$(hostname)
+var1=$(hostname -a)
 var2=$(hostname -I)
 var3=$(df -h /root --output=avail | tail -n +2)
 
@@ -16,11 +17,12 @@ var3=$(df -h /root --output=avail | tail -n +2)
 #(the operating system and the curent version of it)
 #(the IP address of the host machine)
 #(the amont of disk space avalable on the Root filesystem )
-echo "
+cat <<EOF
+$title
 ===========================================
 FQDN:                    $var1
 OS:                      $PRETTY_NAME
 ip:                      $var2
 disk space in root:     $var3
 ===========================================
-"
+EOF
