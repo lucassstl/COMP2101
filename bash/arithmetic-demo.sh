@@ -7,11 +7,11 @@
 #    the sum of the 3 numbers with a label
 #    the product of the 3 numbers with a label
 
-read $firstnum
-read $secondnum
-$sum=$((firstnum + secondnum))
-$dividend=$((firstnum / secondnum))
-$fpdividend=$(awk "BEGIN{printf \"%.2f\", $firstnum/$secondnum}")
+firstnum=(read)
+secondnum=read
+sum=$(($firstnum + $secondnum))
+dividend=$(($firstnum / $secondnum))
+fpdividend=$(awk "BEGIN{printf \"%.2f\", $firstnum/$secondnum}")
 
 cat <<EOF
 $firstnum plus $secondnum is $sum
