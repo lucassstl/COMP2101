@@ -1,0 +1,1 @@
+Get-CimInstance Win32_NetworkAdapterConfiguration | where-object ipenabled | Select-Object Description, Index, IPAddress, IPSubnet, DNSDomain, DNSServerSearchOrder
