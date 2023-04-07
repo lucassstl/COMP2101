@@ -1,6 +1,7 @@
+
 #this function gets the os name and version and displays 
 
-function Get-OSInfo {
+function get-OSInfo {
     Write-host "Operating system information"-ForegroundColor Green
     $os = Get-WmiObject -Class win32_operatingsystem
     Write-Host "Operating System: $($os.Caption)"
@@ -41,14 +42,15 @@ function Get-ProcessorInfo {
     }
 }
 
-Get-OSInfo
-Get-ProcessorInfo
 
 #this section will get information on the RAM of the system and display it 
+
+function get-memoryinfo{
 
 $memory = Get-WmiObject Win32_PhysicalMemory
 $table = @()
 $totalMemory = 0
+
 foreach ($dimm in $memory) {
     
     #this is going to fech the data on the ram and if there is no data it will display N/D 
@@ -83,15 +85,24 @@ foreach ($dimm in $memory) {
     }
     $table += $row
 }
-Write-Host "  "
-Write-Host "RAM informatio" -ForegroundColor Green
-Write-Host "--------------"
-$table | Format-Table Vendor, Description, Size, Bank, Slot
+ 
+ 
+    Write-Host "  "
+    Write-Host "RAM informatio" -ForegroundColor Green
+    Write-Host "--------------"
 
 
+if (!$memory){
+    write-host "N/D"
+}
+
+
+    $table | Format-Table Vendor, Description, Size, Bank, Slot
+
+}
 
 #this section will display the information on the disk drives and display it
-
+function get-diskinfo {
 $disks = Get-WmiObject -Class Win32_DiskDrive | Where-Object {$_.MediaType -ne "Removable Media" -and $_.InterfaceType -ne "USB"}
 
 $table = @()
@@ -135,10 +146,10 @@ Write-host "  "
 Write-Host "Disk drive information" -ForegroundColor Green
 Write-Host "----------------------"
 $table | Format-Table Vendor, Model, Size, FreeSpace, PercentFree
-
+}
 
 #this will get the information about the video cart adn display it 
-
+function get-videoinfo{
 $videoController = Get-WmiObject Win32_VideoController
 $table = @()
 
@@ -156,12 +167,51 @@ foreach ($vc in $videoController) {
     $table += $row
 }
 
-#this will display the information on the enabled network adapters and display it
+
 
 Write-Host "video informatio" -ForegroundColor Green
 Write-Host "----------------"
 $table | Format-Table Vendor, Description, Resolution
+}
 
+
+#this will display the information on the enabled network adapters and display it
+function get-networkinfo{
 Write-Host "network configuration" -ForegroundColor Green
 Write-Host "---------------------"
-Get-CimInstance Win32_NetworkAdapterConfiguration | where-object ipenabled | Select-Object Description, Index, IPAddress, IPSubnet, DNSDomain, DNSServerSearchOrder
+Get-CimInstance Win32_NetworkAdapterConfiguration | where-object ipenabled |
+ Select-Object Description, Index, IPAddress, IPSubnet, DNSDomain, DNSServerSearchOrder
+}
+
+
+
+function get-report{
+
+
+    Param (
+        [switch]$system,
+        [switch]$disks,
+        [switch]$network
+    )
+
+    if ($system){
+        Get-OSInfo
+        Get-ProcessorInfo
+        get-memoryinfo
+        get-videoinfo
+    }
+    elseif($disks){
+        get-diskinfo
+    }
+    elseif($network){
+        get-networkinfo
+    }
+    else {
+        Get-OSInfo
+        Get-ProcessorInfo
+        get-memoryinfo
+        get-videoinfo
+        get-diskinfo
+        get-networkinfo
+}
+}
